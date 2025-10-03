@@ -18,11 +18,15 @@ AF_DCMotor motor_direita(3);  // M3: Motor de Locomoção Direito (Roda)
 AF_DCMotor motor_limpeza2(4); // M4: Motor das Escovas/Cerdas (Limpeza 2)
 
 
+
 // --- Mapeamento de Hardware (Ultrassônico) ---
-// O pino 'serv' foi removido.
+
 #define   trig        A4                 // Pino de trigger do sensor HC-SR04
 #define   echo        A5                 // Pino de echo do sensor HC-SR04
 
+// --- Sensores IR ---
+#define ir_esq 7   // Sensor IR esquerdo
+#define ir_dir 8   // Sensor IR direito
 
 // --- Protótipo das Funções Auxiliares ---
 float measureDistance();                // Mede e retorna a distância em cm
@@ -46,14 +50,13 @@ void setup()
 {
   
   // 1. Configuração dos pinos do sensor
-  pinMode(trig, OUTPUT);                       
-  // O pino do servo foi removido.
+  pinMode(trig, OUTPUT);                 
   pinMode(echo, INPUT);                        
  
-  // O objeto servo1 e a função attach foram removidos.
-   
-  digitalWrite(trig, LOW);                     
-   
+  pinMode(ir_esq, INPUT);
+  pinMode(ir_dir, INPUT);
+  
+  digitalWrite(trig, LOW);
   delay(500);                                  
   
   // 2. LIGA OS MOTORES DE LIMPEZA (M1 e M4) E OS MANTÉM LIGADOS
@@ -73,14 +76,24 @@ void loop()
      robot_forward(velocidade_locomocao);
      delay(80); 
   
-     dist_cm = measureDistance(); // Mede a distância à frente
+     dist_cm = measureDistance();// Mede a distância à frente
+     int irE = digitalRead(ir_esq);
+     int irD = digitalRead(ir_dir);
   
      if(dist_cm < 20) // Se a distância for menor que 20 cm
      {
          decision_fixed(); // Entra na rotina de desvio
      }
-     
- 
+     else if (irE == LOW) { 
+          // Obstáculo na esquerda → gira direita
+          robot_right(velocidade_locomocao);
+          delay(500);
+     }
+     else if (irD == LOW) { 
+          // Obstáculo na direita → gira esquerda
+          robot_left(velocidade_locomocao);
+          delay(500);
+  }
 } //end loop
 
 
