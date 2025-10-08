@@ -1,0 +1,17 @@
+const int pinoControleRele = 7; // O pino do Arduino conectado ao IN1 do relé
+
+void setup() {
+  pinMode(pinoControleRele, OUTPUT);
+  // Garante que a fan comece desligada (HIGH para relés de lógica invertida)
+  digitalWrite(pinoControleRele, HIGH); 
+}
+
+void loop() {
+  // LIGA a fan (Enviando LOW, se for lógica invertida)
+  digitalWrite(pinoControleRele, LOW);
+  delay(10000); // Mantém ligada por 10 segundos
+
+  // DESLIGA a fan (Enviando HIGH)
+  digitalWrite(pinoControleRele, HIGH);
+  delay(10000); // Mantém desligada por 10 segundos
+}
